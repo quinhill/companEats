@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import { auth, db } from '../../firebase';
 
 class SignUp extends Component {
   constructor() {
     super()
     this.state = {
-      username: '',
+      first_name: '',
+      last_name: '',
       email: '',
       passwordOne: '',
       passwordTwo: '',
@@ -12,13 +14,35 @@ class SignUp extends Component {
     }
   }
 
-  onSubmit = (event) => {
+  onSubmit = async (event) => {
     event.preventDefault();
+    const {
+      first_name,
+      last_name,
+      passwordOne,
+      email
+    } = this.state;
+
+    try {
+      const authUser = await auth.doCreateUserWithEmailAndPassword(email, passwordOne);
+      console.log(authUser.user.uid)
+      db.ref().child(authUser.user.uid).set({
+          first_name,
+          last_name,
+          email
+        });
+    }
+    catch (err) {
+      this.setState({ error: err })
+    }
+
+    this.resetState();
   }
 
   resetState = () => {
     this.setState({
-        username: '',
+        first_name: '',
+        last_name: '',
         email: '',
         passwordOne: '',
         passwordTwo: '',
@@ -34,23 +58,38 @@ class SignUp extends Component {
   render() {
     
     const {
-      username,
+      first_name,
+      last_name,
       email,
       passwordOne,
       passwordTwo,
       error
     } = this.state;
 
+    const isInvalid =
+      passwordOne !== passwordTwo ||
+      passwordOne.length < 6 ||
+      email === '' ||
+      first_name === '' ||
+      last_name === '';
+
     return (
       <form
         onSubmit={this.onSubmit}
       >
       <input
-          value={username}
+          value={first_name}
           onChange={this.handleChange}
-          name='username'
+          name='first_name'
           type="text"
-          placeholder="Full Name"
+          placeholder="First Name"
+        />
+        <input
+          value={last_name}
+          onChange={this.handleChange}
+          name='last_name'
+          type="text"
+          placeholder="Last Name"
         />
         <input
           value={email}
@@ -73,7 +112,10 @@ class SignUp extends Component {
           name='passwordTwo'
           placeholder="Confirm Password"
         />
-        <button type="submit">
+        <button 
+          type="submit"
+          disabled={isInvalid}
+        >
           Sign Up
         </button>
 
