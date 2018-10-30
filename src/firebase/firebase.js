@@ -1,9 +1,10 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+import { apiKey } from '../apiKey';
 
 const config = {
-  apiKey: "AIzaSyAnVXcTSfT22f79ivQajNEz-G9zb2mky1M",
+  apiKey,
   authDomain: "companeats.firebaseapp.com",
   databaseURL: "https://companeats.firebaseio.com",
   projectId: "companeats",
