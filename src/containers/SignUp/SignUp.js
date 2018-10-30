@@ -25,7 +25,6 @@ class SignUp extends Component {
 
     try {
       const authUser = await auth.doCreateUserWithEmailAndPassword(email, passwordOne);
-      console.log(authUser.user.uid)
       db.ref().child(authUser.user.uid).set({
           first_name,
           last_name,
