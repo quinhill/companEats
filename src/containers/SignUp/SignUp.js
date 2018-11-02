@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { auth, db } from '../../firebase';
+import { signUp } from '../../actions';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class SignUp extends Component {
   constructor() {
@@ -25,11 +28,14 @@ class SignUp extends Component {
 
     try {
       const authUser = await auth.doCreateUserWithEmailAndPassword(email, passwordOne);
-      db.ref().child(authUser.user.uid).set({
-          first_name,
-          last_name,
-          email
-        });
+      const uid = authUser.user.uid;
+      const user = {
+        first_name,
+        last_name,
+        email
+      };
+      db.collection('users').doc(uid).set({ ...user });
+      this.props.signUp(user)
     }
     catch (err) {
       this.setState({ error: err })
@@ -124,4 +130,8 @@ class SignUp extends Component {
   }
 }
 
-export default SignUp;
+export const mapDispatchToProps = (dispatch) => ({
+  signUp: user => dispatch(signUp(user))
+})
+
+export default withRouter(connect(null, mapDispatchToProps)(SignUp));
