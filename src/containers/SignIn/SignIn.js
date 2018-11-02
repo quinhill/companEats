@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import './sign-in.css';
+import { auth, db } from '../../firebase';
+import { signIn } from '../../actions';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 export class SignIn extends Component {
   constructor() {
@@ -9,6 +13,39 @@ export class SignIn extends Component {
       password: '',
       error: null
     }
+  }
+
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+  }
+
+  submitSignIn = async (event) => {
+    event.preventDefault();
+    const {
+      password,
+      email
+    } = this.state;
+
+    try {
+      const authUser = await auth.doSignInWithEmailAndPassword(email, password);
+      const uid = authUser.user.uid;
+      const query = db.collection('users').doc(uid);
+      const user = await query.get();
+      this.props.signIn(user.data())
+    }
+    catch (err) {
+      this.setState({ error: err })
+    }
+    this.resetState();
+  }
+
+  resetState = () => {
+    this.setState({
+      email: '',
+      password: '',
+      error: null
+    })
   }
 
   render() {
@@ -25,7 +62,7 @@ export class SignIn extends Component {
 
     return (
       <form
-        onSubmit={this.onSubmit}
+        onSubmit={this.submitSignIn}
       >
       <input
           value={email}
@@ -52,3 +89,9 @@ export class SignIn extends Component {
     );
   }
 }
+
+export const mapDispatchToProps = (dispatch) => ({
+  signIn: (user) => dispatch(signIn(user))
+})
+
+export default withRouter(connect(null, mapDispatchToProps)(SignIn));

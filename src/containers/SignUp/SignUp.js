@@ -17,7 +17,7 @@ class SignUp extends Component {
     }
   }
 
-  onSubmit = async (event) => {
+  submitSignUp = async (event) => {
     event.preventDefault();
     const {
       first_name,
@@ -80,7 +80,7 @@ class SignUp extends Component {
 
     return (
       <form
-        onSubmit={this.onSubmit}
+        onSubmit={this.submitSignUp}
       >
       <input
           value={first_name}
