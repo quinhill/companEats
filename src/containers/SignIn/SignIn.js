@@ -26,13 +26,18 @@ export class SignIn extends Component {
       password,
       email
     } = this.state;
+    const {
+      history,
+      signIn
+    } = this.props;
 
     try {
       const authUser = await auth.doSignInWithEmailAndPassword(email, password);
       const uid = authUser.user.uid;
       const query = db.collection('users').doc(uid);
       const user = await query.get();
-      this.props.signIn(user.data())
+      signIn(user.data())
+      history.push('/')
     }
     catch (err) {
       this.setState({ error: err })

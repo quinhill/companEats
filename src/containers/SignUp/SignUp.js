@@ -25,6 +25,10 @@ class SignUp extends Component {
       passwordOne,
       email
     } = this.state;
+    const {
+      history,
+      signUp
+    } = this.props;
 
     try {
       const authUser = await auth.doCreateUserWithEmailAndPassword(email, passwordOne);
@@ -35,7 +39,8 @@ class SignUp extends Component {
         email
       };
       db.collection('users').doc(uid).set({ ...user });
-      this.props.signUp(user)
+      signUp(user);
+      history.push('/');
     }
     catch (err) {
       this.setState({ error: err })
