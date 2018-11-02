@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { auth, db } from '../../firebase';
+import { signUp } from '../../actions';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class SignUp extends Component {
   constructor() {
@@ -14,7 +17,7 @@ class SignUp extends Component {
     }
   }
 
-  onSubmit = async (event) => {
+  submitSignUp = async (event) => {
     event.preventDefault();
     const {
       first_name,
@@ -22,14 +25,22 @@ class SignUp extends Component {
       passwordOne,
       email
     } = this.state;
+    const {
+      history,
+      signUp
+    } = this.props;
 
     try {
       const authUser = await auth.doCreateUserWithEmailAndPassword(email, passwordOne);
-      db.ref().child(authUser.user.uid).set({
-          first_name,
-          last_name,
-          email
-        });
+      const uid = authUser.user.uid;
+      const user = {
+        first_name,
+        last_name,
+        email
+      };
+      db.collection('users').doc(uid).set({ ...user });
+      signUp(user);
+      history.push('/');
     }
     catch (err) {
       this.setState({ error: err })
@@ -74,7 +85,7 @@ class SignUp extends Component {
 
     return (
       <form
-        onSubmit={this.onSubmit}
+        onSubmit={this.submitSignUp}
       >
       <input
           value={first_name}
@@ -124,4 +135,8 @@ class SignUp extends Component {
   }
 }
 
-export default SignUp;
+export const mapDispatchToProps = (dispatch) => ({
+  signUp: user => dispatch(signUp(user))
+})
+
+export default withRouter(connect(null, mapDispatchToProps)(SignUp));
