@@ -4,6 +4,7 @@ import { auth, db } from '../../firebase';
 import { signIn } from '../../actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { SignUpLink } from '../../links';
 
 export class SignIn extends Component {
   constructor() {
@@ -90,6 +91,7 @@ export class SignIn extends Component {
           Sign In
         </button>
         { error && <p>{error.message}</p> }
+        <SignUpLink />
       </form>
     );
   }
