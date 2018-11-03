@@ -3,6 +3,9 @@ import { auth, db } from '../../firebase';
 import { signUp } from '../../actions';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { SignInLink } from '../../links';
+
+import './sign-up.css';
 
 class SignUp extends Component {
   constructor() {
@@ -130,6 +133,7 @@ class SignUp extends Component {
         </button>
 
         { error && <p>{error.message}</p> }
+        <SignInLink />
       </form>
     );
   }

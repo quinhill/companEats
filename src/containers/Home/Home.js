@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './home.css';
+import SignOutButton from '../SignOut/SignOut';
 
 export class Home extends Component {
   constructor() {
@@ -17,6 +18,7 @@ export class Home extends Component {
     return (
       <div>
         <h1>Welcome, {user.first_name}!</h1>
+        <SignOutButton />
       </div>
     );
   }
